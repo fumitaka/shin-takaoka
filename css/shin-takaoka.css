@@ -93,10 +93,10 @@ footer {
         font-size: 80px;
     }
     .headline h1:before {
-	content: "";
+        content:url(../img/yakamoti02s.gif);    
     }
     .headline h1:after {
-	content: "";
+	content: url(../img/tosinaga04s.gif);
     }
     .headline h2 {
         font-size: 40px;
