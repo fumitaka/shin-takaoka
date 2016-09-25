@@ -70,7 +70,7 @@
     started
         .then(function () {
             var tEki = {
-                    stop_id:"takaokaEki",
+                    stop_id: "takaokaEki",
                     stop_name: "高岡駅",
                     stop_lat: "36.741677",
                     stop_lon: "137.014932"
@@ -83,22 +83,30 @@
                     title: tEki.stop_name,
                     map: map
                 });
-            spot_data[tEki.stop_id] = {id:tEki.stop_id,marker:takaokaEki,data:tEki};
+            spot_data[tEki.stop_id] = {
+                id: tEki.stop_id,
+                marker: takaokaEki,
+                data: tEki
+            };
             var sTEki = {
-                    stop_id:"shinTakaokaEki",
-                    stop_name:"新高岡駅",
-                    stop_lat:"36.726908",
-                    stop_lon:"137.011975"
+                    stop_id: "shinTakaokaEki",
+                    stop_name: "新高岡駅",
+                    stop_lat: "36.726908",
+                    stop_lon: "137.011975"
                 },
                 shinTakaokaEki = new google.maps.Marker({
                     position: {
                         lat: parseFloat(sTEki.stop_lat),
                         lng: parseFloat(sTEki.stop_lon)
                     },
-                    title: steki.stop_name,
+                    title: sTEki.stop_name,
                     map: map
                 });
-            spot_data[sTEki.stop_id] = {id:sTEki.stop_id,mrker:shinTakaokaEki,data:sTEki};
+            spot_data[sTEki.stop_id] = {
+                id: sTEki.stop_id,
+                mrker: shinTakaokaEki,
+                data: sTEki
+            };
 
             /* // 位置調整を仕込もうとしているが失敗している。
             var bounds = new google.maps.LatLngBounds(takaokaEki.getPosition(), shinTakaokaEki.getPosition());
@@ -112,16 +120,16 @@
                 var lat = parseFloat(row.stop_lat),
                     lng = parseFloat(row.stop_lon),
                     zoneId = parseInt(row.zone_id);
-                console.log(row.stop_name, " ", lat, " ", lng," ",row.zone_id);
+                console.log(row.stop_name, " ", lat, " ", lng, " ", row.zone_id);
                 if (isNaN(lat) || isNaN(lng)) return;
-                zoneId = isNaN(zoneId)? 0:zoneId-1;
+                zoneId = isNaN(zoneId) ? 0 : zoneId - 1;
                 var marker = new google.maps.Marker({
                     position: {
                         lat: lat,
                         lng: lng
                     },
                     title: row.stop_name,
-                    icon:settings.SPOT.ICONS[zoneId],
+                    icon: settings.SPOT.ICONS[zoneId],
                     map: map
                 });
                 var info = new google.maps.InfoWindow({
@@ -130,7 +138,12 @@
                 google.maps.event.addListener(marker, 'click', function () {
                     info.open(map, marker);
                 });
-                spot_data[row.stop_id] = {id:row.stop_id,marker:marker,info:info,data:row};
+                spot_data[row.stop_id] = {
+                    id: row.stop_id,
+                    marker: marker,
+                    info: info,
+                    data: row
+                };
             })
         });
 })(window, {
@@ -139,8 +152,8 @@
         lat: 36.735617,
         lng: 137.010474
     },
-    SPOT:{
-        ICONS:[
+    SPOT: {
+        ICONS: [
             "./img/bus_stop0.png",
             "./img/bus_stop1.png",
             "./img/bus_stop2.png",
