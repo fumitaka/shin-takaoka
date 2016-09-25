@@ -1,0 +1,2 @@
+agency_id, agency_name,agency_url,agency_timezone,agency_lang
+Kaetsuno,加越能バス,http://www.kaetsunou.co.jp/,Asia/Tokyo,ja
