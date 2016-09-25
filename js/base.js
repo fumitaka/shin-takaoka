@@ -123,13 +123,14 @@
     },
     SPOT:{
         ICONS:[
-            "./img/bus_stop0.png",
-            "./img/bus_stop1.png",
-            "./img/bus_stop2.png",
-            "./img/bus_stop3.png",
-            "./img/bus_stop4.png",
-            "./img/bus_stop5.png",
-            "./img/bus_stop6.png"
+            "./img/spot1.png",
+            "./img/spot2.png",
+            "./img/spot3.png",
+            "./img/spot4.png",
+            "./img/spot5.png",
+            "./img/spot6.png",
+            "./img/spot7.png",
+            "./img/bus-stop0.png",
         ],
         FILE_PATH: "./csv/takaoka_spot_utf-8.csv"
     }
