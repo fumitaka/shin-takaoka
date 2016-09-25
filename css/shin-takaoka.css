@@ -80,17 +80,26 @@ footer {
     margin: 50px 0;
 }
 .footer {
+    color: #ffffff;
     background-color: #033c73;
-
+    text-align:center
 }
 
 @media(max-width:1200px) {
-    .headline h1 {
-        font-size: 140px;
+    body {
+	margin-top:0;
     }
-
+    .headline h1 {
+        font-size: 80px;
+    }
+    .headline h1:before {
+	content: "";
+    }
+    .headline h1:after {
+	content: "";
+    }
     .headline h2 {
-        font-size: 63px;
+        font-size: 40px;
     }
 
     .featurette-divider {
