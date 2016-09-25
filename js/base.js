@@ -11,6 +11,7 @@
         return new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest()
             xhr.addEventListener("loadend", function (e) {
+                console.log(arguments);
                 if (xhr.status === 200)
                     resolve(xhr.response);
                 else
@@ -49,7 +50,7 @@
             };
         }
         /** データの読み込み Promise<rows> */
-    var getCsv = reader(settings.SPOT_FILE_PATH).then(csvResponseToRows)
+    var getCsv = reader(settings.SPOT.FILE_PATH).then(csvResponseToRows)
         .catch(function (e) {
             console.error(e);
         });
@@ -92,15 +93,18 @@
         .then(function (rows) {
             rows.body.forEach(function (row) {
                 var lat = parseFloat(row.stop_lat),
-                    lng = parseFloat(row.stop_lon);
-                console.log(row.stop_name, " ", lat, " ", lng);
+                    lng = parseFloat(row.stop_lon),
+                    zoneId = parseInt(row.zone_id);
+                console.log(row.stop_name, " ", lat, " ", lng," ",row.zone_id);
                 if (isNaN(lat) || isNaN(lng)) return;
+                zoneId = isNaN(zoneId)? 0:zoneId-1;
                 var marker = new google.maps.Marker({
                     position: {
                         lat: lat,
                         lng: lng
                     },
                     title: row.stop_name,
+                    icon:settings.SPOT.ICONS[zoneId],
                     map: map
                 });
                 var info = new google.maps.InfoWindow({
@@ -117,5 +121,16 @@
         lat: 36.735617,
         lng: 137.010474
     },
-    SPOT_FILE_PATH: "./csv/takaoka_spot_utf-8.csv"
+    SPOT:{
+        ICONS:[
+            "./img/bus_stop0.png",
+            "./img/bus_stop1.png",
+            "./img/bus_stop2.png",
+            "./img/bus_stop3.png",
+            "./img/bus_stop4.png",
+            "./img/bus_stop5.png",
+            "./img/bus_stop6.png"
+        ],
+        FILE_PATH: "./csv/takaoka_spot_utf-8.csv"
+    }
 });
