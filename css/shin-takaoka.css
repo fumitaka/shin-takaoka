@@ -28,6 +28,12 @@ body {
     background: #fff;
     background: rgba(255,255,255,0.9);
 }
+.headline h1:before {
+    content: url(../img/yakamoti02.gif);
+}
+.headline h1:after {
+    content: url(../img/tosinaga04.gif);
+}
 
 .headline h2 {
     font-size: 77px;
@@ -74,17 +80,26 @@ footer {
     margin: 50px 0;
 }
 .footer {
+    color: #ffffff;
     background-color: #033c73;
-
+    text-align:center
 }
 
 @media(max-width:1200px) {
-    .headline h1 {
-        font-size: 140px;
+    body {
+	margin-top:0;
     }
-
+    .headline h1 {
+        font-size: 80px;
+    }
+    .headline h1:before {
+	content: "";
+    }
+    .headline h1:after {
+	content: "";
+    }
     .headline h2 {
-        font-size: 63px;
+        font-size: 40px;
     }
 
     .featurette-divider {
@@ -145,6 +160,13 @@ footer {
 
     .featurette-heading {
         font-size: 25px;
+    }
+    main.featurette #map-main {
+        width: 100%;
+	height: 400px;
+        max-height:400px;
+        height: 70vh;
+	max-height: 70vh;
     }
 }
 
