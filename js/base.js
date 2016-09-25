@@ -2,6 +2,8 @@
     "use strict";
     /** マップオブジェクト */
     var map = null;
+    /** 場所管理用データ */
+    var spot_data = null;
     /**
      * 読み込み函数
      * @param url 読み込みファイルURL
@@ -61,27 +63,42 @@
                 center: settings.DEFALUT_CENTER,
                 zoom: 14
             });
+            spot_data = {};
             resolve();
         };
     });
     started
         .then(function () {
-            var takaokaEki = new google.maps.Marker({
-                position: {
-                    lat: 36.741677,
-                    lng: 137.014932
+            var tEki = {
+                    stop_id:"takaokaEki",
+                    stop_name: "高岡駅",
+                    stop_lat: "36.741677",
+                    stop_lon: "137.014932"
                 },
-                title: "高岡駅",
-                map: map
-            });
-            var shinTakaokaEki = new google.maps.Marker({
-                position: {
-                    lat: 36.726908,
-                    lng: 137.011975
+                takaokaEki = new google.maps.Marker({
+                    position: {
+                        lat: parseFloat(tEki.stop_lat),
+                        lng: parseFloat(tEki.stop_lon)
+                    },
+                    title: tEki.stop_name,
+                    map: map
+                });
+            spot_data[tEki.stop_id] = {id:tEki.stop_id,marker:takaokaEki,data:tEki};
+            var sTEki = {
+                    stop_id:"shinTakaokaEki",
+                    stop_name:"新高岡駅",
+                    stop_lat:"36.726908",
+                    stop_lon:"137.011975"
                 },
-                title: "新高岡駅",
-                map: map
-            });
+                shinTakaokaEki = new google.maps.Marker({
+                    position: {
+                        lat: parseFloat(sTEki.stop_lat),
+                        lng: parseFloat(sTEki.stop_lon)
+                    },
+                    title: steki.stop_name,
+                    map: map
+                });
+            spot_data[sTEki.stop_id] = {id:sTEki.stop_id,mrker:shinTakaokaEki,data:sTEki};
 
             /* // 位置調整を仕込もうとしているが失敗している。
             var bounds = new google.maps.LatLngBounds(takaokaEki.getPosition(), shinTakaokaEki.getPosition());
@@ -113,6 +130,7 @@
                 google.maps.event.addListener(marker, 'click', function () {
                     info.open(map, marker);
                 });
+                spot_data[row.stop_id] = {id:row.stop_id,marker:marker,info:info,data:row};
             })
         });
 })(window, {
