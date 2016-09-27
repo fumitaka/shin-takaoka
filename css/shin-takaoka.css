@@ -24,15 +24,14 @@ body {
 }
 
 .headline h1 {
-    font-size: 5em;
-    background: #fff;
-    background: rgba(255,255,255,0.9);
+    font-size: 1.5em;
+    /*background: #fff;
+    background: rgba(255,255,255,0.9);*/
+    margin:0;
 }
-.headline h1:before {
-    content: url(../img/yakamoti02.gif);
-}
-.headline h1:after {
-    content: url(../img/tosinaga04.gif);
+.headline h1 img {
+    width:100%;
+    height:auto;
 }
 
 .headline h2 {
@@ -90,13 +89,7 @@ footer {
 	margin-top:0;
     }
     .headline h1 {
-        font-size: 80px;
-    }
-    .headline h1:before {
-        content:url(../img/yakamoti02s.gif);    
-    }
-    .headline h1:after {
-	content: url(../img/tosinaga04s.gif);
+        font-size: 1.2em;
     }
     .headline h2 {
         font-size: 40px;
@@ -121,7 +114,7 @@ footer {
 
 @media(max-width:991px) {
     .headline h1 {
-        font-size: 105px;
+        font-size: 1.2em;
     }
 
     .headline h2 {
@@ -172,7 +165,7 @@ footer {
 
 @media(max-width:668px) {
     .headline h1 {
-        font-size: 70px;
+        font-size: 1.2em;
     }
 
     .headline h2 {
@@ -190,7 +183,7 @@ footer {
     }
 
     .headline h1 {
-        font-size: 60px;
+        font-size: 1.2em;
     }
 
     .headline h2 {
