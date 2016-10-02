@@ -179,7 +179,7 @@ LandMap.prototype.drawRoute = function (latLngList) {
     if (latLngList.length < 2) {
         return;
     }
-
+    $('#routeDetail').html("");
     //複数の点列のルートをまとめてGoogleにリクエストするための準備
     var routeRequestList = new Array();
     var maxWayPointCount = 8;
@@ -278,6 +278,7 @@ LandMap.prototype.drawRoute = function (latLngList) {
                     }
                 }
                 if (isFinish) {
+                    
                     var totalDistance = 0;
                     var totalTimeSpan = 0;
                     var arrivalTime = 8 * 3600;//this.custListSetting.startTime;
