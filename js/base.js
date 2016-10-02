@@ -1,7 +1,8 @@
+var map = null;
 (function (base, settings) {
     "use strict";
     /** マップオブジェクト */
-    var map = null;
+    //var map = null;
     /** 場所管理用データ */
     var spot_data = null;
     /**
