@@ -1,14 +1,14 @@
-stop_id,stop_name,stop_desc,stop_lat,stop_lon
-TakaokaEkiMinamiGuchi1,高岡駅南口,高岡駅南口1番のりば,36.740426,137.015662
-TakaokaEkiMinamiGuchi2,高岡駅南口,高岡駅南口2番のりば,36.740419,137.015949
-Ekinan0,駅南,駅南 新高岡駅方面のりば,36.737840,137.015612
-Ekinan1,駅南,駅南 高岡駅南口方面のりば,36.737827,137.015414
-ZuiryujiGuchi0,瑞龍寺口,瑞龍寺口 新高岡駅方面のりば,36.735705,137.015543
-ZuiryujiGuchi1,瑞龍寺口,瑞龍寺口 高岡駅南口方面のりば,36.735703,137.015326
-Kyoden0,京田,京田 新高岡駅方面のりば,36.730149,137.015445
-Kyoden1,京田,京田 高岡駅南口方面のりば,36.731462,137.015263
-AeonMallGuchi0,イオンモール口,イオンモール口 新高岡駅方面のりば,36.726183,137.015345
-ShinTakaokaEki1,新高岡駅,新高岡駅1番のりば,36.726644,137.011326
-ShinTakaokaEki2,新高岡駅,新高岡駅2番のりば,36.726495,137.011311
-ShinTakaokaEki3,新高岡駅,新高岡駅3番のりば,36.726654,137.011234
-ShinTakaokaEki4,新高岡駅,新高岡駅4番のりば,36.726506,137.011220
+stop_id,stop_name,stop_desc,stop_lat,stop_lon,zone_id
+TakaokaEkiMinamiGuchi1,高岡駅南口,高岡駅南口1番のりば,36.740426,137.015662,TakaokaEkiMinamiGuchi
+TakaokaEkiMinamiGuchi2,高岡駅南口,高岡駅南口2番のりば,36.740419,137.015949,TakaokaEkiMinamiGuchi
+Ekinan0,駅南,駅南 新高岡駅方面のりば,36.737840,137.015612,TakaokaEkiMinamiGuchi
+Ekinan1,駅南,駅南 高岡駅南口方面のりば,36.737827,137.015414,TakaokaEkiMinamiGuchi
+ZuiryujiGuchi0,瑞龍寺口,瑞龍寺口 新高岡駅方面のりば,36.735705,137.015543,TakaokaEkiMinamiGuchi
+ZuiryujiGuchi1,瑞龍寺口,瑞龍寺口 高岡駅南口方面のりば,36.735703,137.015326,TakaokaEkiMinamiGuchi
+Kyoden0,京田,京田 新高岡駅方面のりば,36.730149,137.015445,ShinTakaokaEki
+Kyoden1,京田,京田 高岡駅南口方面のりば,36.731462,137.015263,ShinTakaokaEki
+AeonMallGuchi0,イオンモール口,イオンモール口 新高岡駅方面のりば,36.726183,137.015345,ShinTakaokaEki
+ShinTakaokaEki1,新高岡駅,新高岡駅1番のりば,36.726644,137.011326,ShinTakaokaEki
+ShinTakaokaEki2,新高岡駅,新高岡駅2番のりば,36.726495,137.011311,ShinTakaokaEki
+ShinTakaokaEki3,新高岡駅,新高岡駅3番のりば,36.726654,137.011234,ShinTakaokaEki
+ShinTakaokaEki4,新高岡駅,新高岡駅4番のりば,36.726506,137.011220,ShinTakaokaEki
