@@ -75,7 +75,8 @@
             <div id="foot-sub-item"> 
                 <a href="TwitterMain.html" target="_top" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-share"></span>Twitter</a><br/>
                 <a href="#" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-taxi"></span>タクシーを呼ぶ</a>
-            <div><input id="searchKeyword" type="text"/><button onClick="landMap.addressMatching($('#searchKeyword').val(),function(){});">検索</button></div>
+                <div><input id="searchKeyword" type="text"/><button onClick="landMap.addressMatching($('#searchKeyword').val(),function(){});">検索</button></div>
+                <button onClick="$('#routeDetail').dialog('close');$('#recommendCoure').dialog('open');">おすすめコース</button>
             </div>
             
             
@@ -87,20 +88,22 @@
              </div>
         </div>
         
-        <div class="panel panel-primary">
-            <div class="panel-heading">おすすめコース</div>
-            <div class="panel-body">
-                所要時間<select><option value="60">1時間</option><option value="60">2時間</option><option value="60">3時間</option></select>
-                出発時刻<input type="text" value="10:00"/><br />
-                出発<select><option value="takaoka" selected>高岡駅</option><option value="shin">新高岡駅</option></select>
-                到着<select><option value="takaoka">高岡駅</option><option value="shin" selected>新高岡駅</option></select><br />
-                移動手段<select><option value="walk">徒歩</option><option value="walk">自転車</ption></select>
-                <input type="checkbox">バスを使う<br />
-                <button onclick='landMap.searchRoute();'>検索</button><br />                
-                <div id="routeDetail"></div>
-            </div>
-        </div>
-        <textarea id="myconsole"></textarea><a onclick='$("#myconsole").html("");'>クリア</a>
+        
+        <div id="recommendCoure" title="おすすめコース">
+                所要時間<select id="freeTime"><option value="1">1時間</option><option value="2">2時間</option><option value="3">3時間</option></select>
+                出発時刻<input id="startTime" type="text" value="10:00"/><br />
+                出発<select id="startSta"><option value="takaoka" selected>高岡駅</option><option value="shin">新高岡駅</option></select>
+                到着<select id="returnSta"><option value="takaoka">高岡駅</option><option value="shin" selected>新高岡駅</option></select><br />
+                移動手段<select id="transportation"><option value="walk">徒歩</option><option value="bicycle">自転車</option></select>
+                <input id="useBus" type="checkbox">バスを使う<br />
+                足の長さ<select id="footLength"><option value="short">短め</option><option value="normal" selected>普通</option><option value="long">長め</option></select>
+                <button onclick='$("#recommendCoure").dialog("close");landMap.searchRoute();'>検索</button>
+        </div>               
+        <div id="routeDetail" title="コース詳細"></div>
+            
+        
+        
+        <!--<textarea id="myconsole"></textarea><a onclick='$("#myconsole").html("");'>クリア</a>-->
         <hr class="featurette-divider">
 
         <!-- First Featurette -->
@@ -154,12 +157,34 @@
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
-
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="./js/map.js" type="text/javascript"></script>
     <script type="text/javascript">
     	window.onload = function() { 
         	landMap = new LandMap();
         	landMap.Init(map);
+
+            $("#recommendCoure").dialog({
+                autoOpen: false,
+                position: {
+                    of: '#map-main',
+                    at: 'right top',
+                    my: 'right top'
+                }
+            });
+            
+            $("#routeDetail").dialog({
+                autoOpen: false,
+                position: {
+                    of: '#map-main',
+                    at: 'right top',
+                    my: 'right top'
+                }
+            });
+            
+
+            
     	}
     </script>
     <!-- Bootstrap Core JavaScript -->

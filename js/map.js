@@ -70,12 +70,13 @@ LandMap.prototype.putMarker = function (lat, lng) {
 /*-------------------------------------------*/
 LandMap.prototype.putMarkerToMap = function (marker) {
     marker.setMap(this.map);
+    return marker;
 }
 /*-------------------------------------------*/
 /*  LandMap.addDragEventHandlerToMarker
 /*-------------------------------------------*/
 //行き先マーカーのイベントハンドラ
-LandMap.prototype.addDragEventHandlerToMarker = function (marker, id) {
+LandMap.prototype.addEventHandlerToMarker = function (marker, id) {
     //ドラッグ開始イベントハンドラ
     google.maps.event.addListener(marker, 'dragstart', function (ev) {
         
@@ -161,6 +162,9 @@ LandMap.prototype.getPosition = function () {
         return null;
     }
 }
+/*-------------------------------------------*/
+/*  LandMap.getLatlngList
+/*-------------------------------------------*/
 LandMap.prototype.getLatlngList = function (array) {
     var list = [];
     for(var i=0;i<array.length;i++){
@@ -168,14 +172,19 @@ LandMap.prototype.getLatlngList = function (array) {
     }
     return list;
 }
+
+/*-------------------------------------------*/
+/*  LandMap.searchRouteRoute
+/*-------------------------------------------*/
 LandMap.prototype.searchRoute = function(){
-    this.drawRoute(this.getLatlngList(sampleCourse));
+    this.drawRoute(sampleCourse);
 }
 /*-------------------------------------------*/
 /*  LandMap.drawRoute 経路を検索してルート表示
 /*-------------------------------------------*/
 var routeRequestList = null;
-LandMap.prototype.drawRoute = function (latLngList) {  
+LandMap.prototype.drawRoute = function (list) {
+    var latLngList = this.getLatlngList(list)
     if (latLngList.length < 2) {
         return;
     }
@@ -191,7 +200,7 @@ LandMap.prototype.drawRoute = function (latLngList) {
         routeRequestList.push({ startIdx: startIdx, endIdx: endIdx, requestEnd: false, requestSuccess: false, renderer: null });
         idx = endIdx;
     }
-    console.log(routeRequestList);
+
     // レンダリングオプションの設定
     var pen = getRoutePen();
     var rendererOptions = {
@@ -251,7 +260,7 @@ LandMap.prototype.drawRoute = function (latLngList) {
             	//結果取得
                 if (status == google.maps.DirectionsStatus.OK) {
                     api_direction_disp.setDirections(response);
-                    api_direction_disp.setPanel(document.getElementById('routeDetail'));
+                    //api_direction_disp.setPanel(document.getElementById('routeDetail'));
                     routeRequestList[idx].renderer = api_direction_disp;
                     routeRequestList[idx].requestSuccess = true;
                     routeRequestList[idx].requestEnd = true;
@@ -281,39 +290,57 @@ LandMap.prototype.drawRoute = function (latLngList) {
                     
                     var totalDistance = 0;
                     var totalTimeSpan = 0;
-                    var arrivalTime = 8 * 3600;//this.custListSetting.startTime;
+                    var arrivalTime = 10 * 3600;
                     var html = "";
-                    for (var i = 0; i < this.routeRequestList.length; i++) {
-                        var routeRequest = this.routeRequestList[i];
-                        //var startCust = this.custList[routeRequest.startIdx];
-                        //var endCust = this.custList[routeRequest.endIdx];
-                        var route = this.routeRequestList[i].renderer.getDirections().routes[0];
+                    for (var i = 0; i < routeRequestList.length; i++) {
+                        var routeRequest = routeRequestList[i];
+                        var startCust = list[routeRequest.startIdx];
+                        var endCust = list[routeRequest.endIdx];
+                        var route = routeRequestList[i].renderer.getDirections().routes[0];
                         for (var j = 0; j < route.legs.length; j++) {
-                            //var cust = this.custList[routeRequest.startIdx + j];
+                            var cust = list[routeRequest.startIdx + j];
 
                             var routeDetail = new RouteDetail();
                             routeDetail.distance = route.legs[j].distance.value; //m
                             routeDetail.timeSpan = route.legs[j].duration.value; //s
                             var instructions = "";
                             for (var n = 0; n < route.legs[j].steps.length; n++) {
-                                instructions += route.legs[j].steps[n].instructions + "<br>";
+                                var instructions_step = 
+                                    route.legs[j].steps[n].instructions + " " +
+                                    route.legs[j].steps[n].distance.text + "<br>";
+                                if(n==route.legs[j].steps.length - 1){
+                                    //<div>目的地は●●です</div>を消す
+                                    //instructions = instructions.replace(/<.+?>/g, "")
+                                    instructions_step = instructions_step.replace(/<div.+?>/g, "");
+                                    instructions_step = instructions_step.replace(/<\/div>/g, "");
+                                    instructions_step = instructions_step.replace(/目的地は.+です/, "");
+                                }
+                                instructions += instructions_step;
                             }
-                            //instructions = instructions.replace(/<.+?>/g, "");
-                            instructions = instructions.replace(/目的地は.+です/, "");
-
                             routeDetail.instructions = instructions;
-                            //cust.routeDetailToNextCust = routeDetail;
+                            cust.routeDetailToNextCust = routeDetail;
 
-                            //cust.arrivalTime = arrivalTime; $("#console").append("到着：" + arrivalTime + "<br>");
-                            //arrivalTime = cust.getNextArrivalTime();
+                            cust.arrivalTime = arrivalTime; //$("#console").append("到着：" + arrivalTime + "<br>");
+                            arrivalTime = arrivalTime + cust.stayTime + parseInt(routeDetail.timeSpan);
 
                             totalDistance += routeDetail.distance;
                             totalTimeSpan += parseInt(routeDetail.timeSpan);// + parseInt(cust.stayTime);
-                            html += routeDetail.distance + "m " + routeDetail.timeSpan + "秒\n";
-                            html += instructions + "\n";
+                            html += "<span style='font-size:1.5em;'>" + cust.name + "</span> " + convertTime(cust.arrivalTime, "h:mm");
+                            if(cust.stayTime != 0){
+                                html += " " + convertTime(cust.stayTime, "h時間m分").replace(/^0時間/, "") + "滞在 ";
+                            }
+                            html += "<br /><a onclick='$(this).next().next().toggle();'>次の行き先まで：" + 
+                                (Math.round((routeDetail.distance * 100) / 1000) / 100) + "km " +
+                                convertTime(routeDetail.timeSpan, "h時間m分").replace(/^0時間/, "") + "</a>" +
+                                "<hr style='border-top: 1px solid #8c8b8b;margin:0px 0px 3px 0px;'>";
+                            html += "<div style='margin:0px 0px 10px 0px;'>" + instructions + "</div>";
                         }
+                        endCust.arrivalTime = arrivalTime;
+                        html += "<span style='font-size:1.5em;'>" + endCust.name + "</span> " + convertTime(endCust.arrivalTime, "h:mm");
+                            
                     }
-                    //$('#routeDetail').html(html);
+                    $('#routeDetail').html(html);
+                    $('#routeDetail').dialog('open');
                 }
             });
         }
@@ -322,7 +349,13 @@ LandMap.prototype.drawRoute = function (latLngList) {
         }
     }
     getRoute();
+    
+    
+    
 }
+/*-------------------------------------------*/
+/*  LandMap.fitToMap 
+/*-------------------------------------------*/
 LandMap.prototype.fitToMap = function (latlngList) {
     var lat_max = -1;
     var lng_max = -1;
@@ -342,6 +375,9 @@ LandMap.prototype.fitToMap = function (latlngList) {
     var latLngBounds = new google.maps.LatLngBounds(ll_sw, ll_ne);
     this.map.fitBounds(latLngBounds);
 }
+/*-------------------------------------------*/
+/*  LandMap.putLine 
+/*-------------------------------------------*/
 LandMap.prototype.putLine = function (latlngList, line){
     line.setPath(latlngList);
     line.setMap(this.map);
@@ -500,6 +536,40 @@ function RouteDetail() {
     this.timeSpan = -1; //s
     this.instructions = "";
 }
+/*--------------------
+秒→時分秒形式
+--------------------*/
+function convertTime(T, Format) {
+
+    if (isNaN(T) || T == null) return "";    // 数値でない
+
+    var hours = Math.floor(T / 3600);
+    if (Format.indexOf("h") >= 0) T = T % 3600;
+    var minutes = Format.indexOf("s") >= 0 ? Math.floor(T / 60) : Math.round(T / 60);
+    if(minutes == 60){
+        hours++;
+        minutes = 0;
+    }
+    var seconds = Math.floor(T % 60);
+    if (hours >= 0) hours = formatNum(Format.split('h').length - 1, hours);
+    if (minutes >= 0) minutes = formatNum(Format.split('m').length - 1, minutes);
+    if (seconds >= 0) seconds = formatNum(Format.split('s').length - 1, seconds);
+
+    Format = Format.replace(/h+/, hours);
+    Format = Format.replace(/m+/, minutes);
+    Format = Format.replace(/s+/, seconds);
+
+    return Format;
+}
+/*--------------------
+数値の０埋め
+--------------------*/
+function formatNum(length, num) {
+    var src = new String(num);
+    var cnt = length - src.length;
+    if (cnt <= 0) return src;
+    while (cnt-- > 0) src = "0" + src; return src;
+}
 /*********************************************/
 /*  地図上オブジェクト描画関連
 /*********************************************/
@@ -539,7 +609,7 @@ var borderLatlngList = [
     {lat:36.741738529645055,lng:137.0094895362854}
     ];
 var sampleCourse = [
-    {lat: "36.741677",lng: "137.014932"},//高岡駅
-    {lat: "36.735797",lng:"137.010485"},//瑞龍寺
-    {lat: "36.726908",lng: "137.011975"}//新高岡駅
+    {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0},
+    {name:"瑞龍寺",lat: "36.735797",lng:"137.010485", stayTime:1800},
+    {name:"新高岡駅",lat: "36.726908",lng: "137.011975", stayTime:0}
 ]
