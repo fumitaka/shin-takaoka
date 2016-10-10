@@ -1,8 +1,7 @@
-var map = null;
-(function (base, settings) {
+(function (base, settings, $) {
     "use strict";
     /** マップオブジェクト */
-    //var map = null;
+    var map = null;
     /** 場所管理用データ */
     var spot_data = null;
     /**
@@ -11,13 +10,13 @@ var map = null;
      * @return Promise<string> 読み込んだデータ
      */
     var reader = function (url) {
-        return new Promise(function (resolve, reject) {
+        return new $.Deferred(function (deferred) {
             var xhr = new XMLHttpRequest();
             xhr.addEventListener("loadend", function (e) {
                 if (xhr.status === 200)
-                    resolve(xhr.response);
+                    deferred.resolve(xhr.response);
                 else
-                    reject(new Error(xhr.statusText));
+                    deferred.reject(new Error(xhr.statusText));
             }, false);
             xhr.open("GET", url);
             xhr.send();
@@ -52,25 +51,24 @@ var map = null;
         }
         /** データの読み込み Promise<rows> */
     var getCsv = reader(settings.SPOT.FILE_PATH).then(csvResponseToRows);
-    
     /** 初動完了Promise<> これが完了していると 変数:map に値が設定される。 */
-    var started = new Promise(function (resolve, reject) {
-        base[settings.CALLBACK_FUNCTION_NAME] = function () {
-            map = new google.maps.Map(document.getElementById("map-main"), {
-                center: settings.DEFALUT_CENTER,
-                zoom: 14
-            });
-            resolve();
-        };
-    });
-    started
-        .then(function () {spot_data = {};
+    var started = new $.Deferred(function (deferred) {
+            base[settings.CALLBACK_FUNCTION_NAME] = function () {
+                map = new google.maps.Map(document.getElementById("map-main"), {
+                    center: settings.DEFALUT_CENTER,
+                    zoom: 14
+                });
+                deferred.resolve();
+            };
+        })
+        .then(function () {
+            spot_data = {};
             var tEki = {
-                    stop_id: "takaokaEki",
-                    stop_name: "高岡駅",
-                    stop_lat: "36.741677",
-                    stop_lon: "137.014932"
-                };
+                stop_id: "takaokaEki",
+                stop_name: "高岡駅",
+                stop_lat: "36.741677",
+                stop_lon: "137.014932"
+            };
             spot_data[tEki.stop_id] = {
                 id: tEki.stop_id,
                 /*marker: new google.maps.Marker({
@@ -84,11 +82,11 @@ var map = null;
                 data: tEki
             };
             var sTEki = {
-                    stop_id: "shinTakaokaEki",
-                    stop_name: "新高岡駅",
-                    stop_lat: "36.726908",
-                    stop_lon: "137.011975"
-                };
+                stop_id: "shinTakaokaEki",
+                stop_name: "新高岡駅",
+                stop_lat: "36.726908",
+                stop_lon: "137.011975"
+            };
 
             spot_data[sTEki.stop_id] = {
                 id: sTEki.stop_id,
@@ -102,21 +100,21 @@ var map = null;
                 }) ,*/
                 data: sTEki
             };
-            
+
             //infoWindow
             var tInfoWindow = new google.maps.InfoWindow({
-                content: '高岡駅', 
+                content: '高岡駅',
                 position: {
-                        lat: parseFloat(tEki.stop_lat),
-                        lng: parseFloat(tEki.stop_lon)
-                    }
+                    lat: parseFloat(tEki.stop_lat),
+                    lng: parseFloat(tEki.stop_lon)
+                }
             });
-            var sInfoWindow = new google.maps.InfoWindow({ 
+            var sInfoWindow = new google.maps.InfoWindow({
                 content: '新高岡駅',
                 position: {
-                        lat: parseFloat(sTEki.stop_lat),
-                        lng: parseFloat(sTEki.stop_lon)
-                    }
+                    lat: parseFloat(sTEki.stop_lat),
+                    lng: parseFloat(sTEki.stop_lon)
+                }
             });
             tInfoWindow.open(map);
             sInfoWindow.open(map);
@@ -159,8 +157,20 @@ var map = null;
                 };
             })
         })
-    .catch(function(e){
-       console.error(e); 
+        .fail(function (e) {
+            console.error(e);
+        })
+        .promise();
+    // 仮の初期化
+    base[settings.BASE_OBJECT_NAME] = {
+        map: null,
+        spot_data: [],
+        started: started
+    };
+    started.then(function () {
+        // started 以降は初期化する
+        base[settings.BASE_OBJECT_NAME].map = map;
+        base[settings.BASE_OBJECT_NAME].spot_data = spot_data;
     });
 })(window, {
     CALLBACK_FUNCTION_NAME: "initMap",
@@ -180,5 +190,6 @@ var map = null;
             "./img/bus-stop0.png",
         ],
         FILE_PATH: "./csv/takaoka_spot_utf-8.csv"
-    }
-});
+    },
+    BASE_OBJECT_NAME: "shinTakaoka"
+}, jQuery);

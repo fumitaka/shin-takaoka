@@ -1,0 +1,3 @@
+fare_id,price,currency_type,payment_method,transfers
+Kaetsuno10,100,JPY,0,0
+Kaetsuno16,160,JPY,0,0
