@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -9,8 +9,9 @@
     <meta name="author" content="">
 
     <title>シン・タカオカ・ランド - 楽しめる新高岡・高岡エリア</title>
-    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&key=AIzaSyBSMXIHZDkgif3AV35qm38k2e7ZZNraS4o" async defer></script>
     <script src="./js/base.js" type="application/ecmascript"></script>
+    <script src="./js/gpsMain.js" type="text/javascript"></script>
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
 
@@ -39,7 +40,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">シン・タカオカ</a>
+                <a class="navbar-brand" href="#">シン・タカオカ・ランド</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -63,59 +64,102 @@
     <!-- Full Width Image Header -->
     <header class="header-image">
         <div class="headline">
-            <div class="container">
-                <h1>シン・タカオカ・ランド</h1>
-                <h2>高岡 VS 新高岡</h2>
-            </div>
-        </div>
+                <h1 style="height:115px;"><img src="img/title.png" alt="シン・タカオカ・ランドへようこそ" /></h1>
+                <h2></h2>            
+        </div>        
     </header>
     <!-- Page Content -->
     <div class="container">
-        <main class="featurette" id="main">
+        <main class="featurette">
+            
             <div id="map-main"></div>
-            <div id="foot-sub-item"> twitter<br/>
-                タクシー</div>
+            <div id="foot-sub-item"> 
+                <a href="TwitterMain.html" target="_top" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-share"></span>Twitter</a><br/>
+                <button onclick="$('#routeDetail').dialog('close'); $('#recommendCoure').dialog('close'); $('#callTaxi').dialog('open'); getAddress();" class="btn btn-sm btn-success">
+                    <span class="glyphicon glyphicon-taxi"></span>タクシーを呼ぶ
+                </button>
+                    <div><input id="searchKeyword" type="text" /><button onclick="landMap.addressMatching($('#searchKeyword').val(),function(){});">検索</button></div>
+                    <button onclick="$('#routeDetail').dialog('close'); $('#callTaxi').dialog('close'); $('#recommendCoure').dialog('open');">おすすめコース</button>
+</div>
+            
+            
         </main>
+	   <div class="panel panel-primary">
+             <div class="panel-heading">つぎのシャトルバス(新高岡～高岡駅)</div>
+             <div class="panel-body">
+               <span class="glyphicon glyphicon-ok-sign"></span>新高岡発　→　高岡方面 つぎは 13:43 ⑤番のりば
+             </div>
+        </div>
+        
+        
+        <div id="recommendCoure" title="おすすめコース">
+                所要時間<select id="freeTime"><option value="1">1時間</option><option value="2">2時間</option><option value="3">3時間</option></select>
+                出発時刻<input id="startTime" type="text" value="10:00"/><br />
+                出発<select id="startSta"><option value="takaoka" selected>高岡駅</option><option value="shin">新高岡駅</option></select>
+                到着<select id="returnSta"><option value="takaoka">高岡駅</option><option value="shin" selected>新高岡駅</option></select><br />
+                移動手段<select id="transportation"><option value="walk">徒歩</option><option value="bicycle">自転車</option></select>
+                <input id="useBus" type="checkbox">バスを使う<br />
+                足の長さ<select id="footLength"><option value="short">短め</option><option value="normal" selected>普通</option><option value="long">長め</option></select>
+                <button onclick='$("#recommendCoure").dialog("close");landMap.searchRoute();'>検索</button>
+        </div>               
+        <div id="routeDetail" title="コース詳細"></div>
+
+        <div id="callTaxi" title="タクシーを呼ぶ">
+            <div id="nowAddress">現在地：</div>
+            <hr>
+            <ul>
+                <li> 高岡交通株式会社  -  TEL：0766231212 </li>
+                <li> 昭和交通株式会社  -  TEL：0120189252 </li>
+                <li> 株式会社新和タクシー  -  TEL：0766270500 </li>
+            </ul>
+        </div>
+        
+        
+        <!--<textarea id="myconsole"></textarea><a onclick='$("#myconsole").html("");'>クリア</a>-->
         <hr class="featurette-divider">
 
         <!-- First Featurette -->
         <div class="featurette" id="about">
-            <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
+            <img class="featurette-image img-circle img-responsive pull-right" src="img/bus.jpg">
             <h2 class="featurette-heading">はじめに
                 <span class="text-muted">北陸新幹線の新高岡駅から高岡駅って行きづらいと感じていませんか? </span>
             </h2>
-            <p class="lead">実はこの2駅の間は1.5km 程度しか離れていません。しかもこのエリアには様々な見所があります。そこでこのゾーンをシン・タカオカ・ランドと名付けました。歩いてよし、バスに乗るのもよし。のんびり城端線を待つのもよし。TDL ならぬ STL をお楽しみください。</p>
+            <p class="lead">実はこの<strong class="text-primary">2駅の間はたったの1.5km</strong>しか離れていません。しかもこのエリアには国宝をはじめ様々な見所があります。そこでこのゾーンを<strong class="text-primary">シン・タカオカ・ランド</strong>と名付けました。歩いてよし、バスに乗るのもよし。のんびり城端線を待つのもよし。TDL ならぬ STL をお楽しみください。</p>
         </div>
 
         <hr class="featurette-divider">
 
         <!-- Second Featurette -->
         <div class="featurette" id="services">
-            <img class="featurette-image img-circle img-responsive pull-left" src="http://placehold.it/500x500">
+            <img class="featurette-image img-circle img-responsive pull-left" src="img/zuiryuji.jpg">
             <h2 class="featurette-heading">使い方
                 <span class="text-muted">スマホで行きたい場所を選ぶだけのカンタン操作</span>
             </h2>
-            <p class="lead">新高岡駅または高岡駅に着いたらあなたはもうシン・タカオカ・ランドの入園者です。宿泊予定のホテルや、シン・タカオカ・ランドの気になるスポットを地図から選べば、アクセスルートが表示されます。バスの時刻だけでなく乗り方もバッチリわかるので安心です。まずは気になるポイントを選んでみましょう。</p>
+            <p class="lead">新高岡駅または高岡駅に着いたらあなたはもうシン・タカオカ・ランドの入園者です。
+宿泊予定のホテルから、あなたが興味を持つスポットを<strong class="text-primary">地図から選択するだけ</strong>で、今滞在している場所から最適な移動手段、経路、時間が表示されます。
+バスや電車の時刻だけでなく乗り方もバッチリわかるので安心です。まずは気になるポイントを選んでみましょう。</p>
         </div>
 
         <hr class="featurette-divider">
 
         <!-- Third Featurette -->
         <div class="featurette" id="contact">
-            <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
+            <img class="featurette-image img-circle img-responsive pull-right" src="img/ai.jpg">
             <h2 class="featurette-heading">お問い合わせ
                 <span class="text-muted">困ったときはお聞きください</span>
             </h2>
-            <p class="lead">お店が見つからない、○○Doが知りたいなど、お問い合わせください。シン・タカオカ・ランドの「中の人」（住人）が親切に答えてくれる（しもしれません）。誰も手が離せないときは人工知能の利家くんが答えてくれるかも!?</p>
+            <p class="lead">目的のお店が見つからない、今自分がどこにいるのか知りたいなど、シン・タカオカ・ランドについてお気軽にお問い合わせください。
+<strong class="text-primary">「中の人」（住人）が親切に答えてくれる</strong>（かもしれません）。誰も手が離せないときは人工知能の利長くんが答えてくれるかも!?</p>
         </div>
 
         <hr class="featurette-divider">
+
 
         <!-- Footer -->
         <footer class="footer">
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Copyright &copy; 2016 Code for Takaoka and friends</p>
+                    <p>Copyright &copy; 2016 <a href="http://code4takaoka.org/">Code for Takaoka</a> and friends</p>
                 </div>
             </div>
         </footer>
@@ -125,7 +169,45 @@
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="./js/map.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    	window.onload = function() { 
+        	landMap = new LandMap();
+        	landMap.Init(map);
 
+            $("#recommendCoure").dialog({
+                autoOpen: false,
+                position: {
+                    of: '#map-main',
+                    at: 'right top',
+                    my: 'right top'
+                }
+            });
+            
+            $("#routeDetail").dialog({
+                autoOpen: false,
+                position: {
+                    of: '#map-main',
+                    at: 'right top',
+                    my: 'right top'
+                }
+            });
+
+            $("#callTaxi").dialog({
+                autoOpen: false,
+                position: {
+                    of: '#map-main',
+                    at: 'right top',
+                    my: 'right top'
+                }
+            });
+            
+
+            
+    	}
+    </script>
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
