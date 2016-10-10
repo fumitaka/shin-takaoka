@@ -1,7 +1,8 @@
+var map = null;
 (function (base, settings) {
     "use strict";
     /** マップオブジェクト */
-    var map = null;
+    //var map = null;
     /** 場所管理用データ */
     var spot_data = null;
     /**
@@ -72,14 +73,14 @@
                 };
             spot_data[tEki.stop_id] = {
                 id: tEki.stop_id,
-                marker: new google.maps.Marker({
+                /*marker: new google.maps.Marker({
                     position: {
                         lat: parseFloat(tEki.stop_lat),
                         lng: parseFloat(tEki.stop_lon)
                     },
                     title: tEki.stop_name,
                     map: map
-                }),
+                }),*/
                 data: tEki
             };
             var sTEki = {
@@ -88,18 +89,37 @@
                     stop_lat: "36.726908",
                     stop_lon: "137.011975"
                 };
+
             spot_data[sTEki.stop_id] = {
                 id: sTEki.stop_id,
-                mrker: new google.maps.Marker({
+                /*marker: new google.maps.Marker({
                     position: {
                         lat: parseFloat(sTEki.stop_lat),
                         lng: parseFloat(sTEki.stop_lon)
                     },
                     title: sTEki.stop_name,
                     map: map
-                }),
+                }) ,*/
                 data: sTEki
             };
+            
+            //infoWindow
+            var tInfoWindow = new google.maps.InfoWindow({
+                content: '高岡駅', 
+                position: {
+                        lat: parseFloat(tEki.stop_lat),
+                        lng: parseFloat(tEki.stop_lon)
+                    }
+            });
+            var sInfoWindow = new google.maps.InfoWindow({ 
+                content: '新高岡駅',
+                position: {
+                        lat: parseFloat(sTEki.stop_lat),
+                        lng: parseFloat(sTEki.stop_lon)
+                    }
+            });
+            tInfoWindow.open(map);
+            sInfoWindow.open(map);
 
             /* // 位置調整を仕込もうとしているが失敗している。
             var bounds = new google.maps.LatLngBounds(takaokaEki.getPosition(), shinTakaokaEki.getPosition());
