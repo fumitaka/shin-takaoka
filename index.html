@@ -9,8 +9,6 @@
     <meta name="author" content="">
 
     <title>シン・タカオカ・ランド - 楽しめる新高岡・高岡エリア</title>
-    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&key=AIzaSyBSMXIHZDkgif3AV35qm38k2e7ZZNraS4o" async defer></script>
-    <script src="./js/base.js" type="application/ecmascript"></script>
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
 
@@ -159,10 +157,14 @@
     <script src="js/jquery.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&key=AIzaSyBSMXIHZDkgif3AV35qm38k2e7ZZNraS4o" async defer></script>
+    <script src="./js/base.js" type="application/ecmascript"></script>
     <script src="./js/map.js" type="text/javascript"></script>
     <script type="text/javascript">
-    	window.onload = function() { 
-        	landMap = new LandMap();
+        shinTakaoka.started
+        .then(function(){
+            var map = shinTakaoka.map;
+            landMap = new LandMap();
         	landMap.Init(map);
 
             $("#recommendCoure").dialog({
@@ -182,10 +184,7 @@
                     my: 'right top'
                 }
             });
-            
-
-            
-    	}
+        });
     </script>
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
