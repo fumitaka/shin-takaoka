@@ -158,6 +158,7 @@ var map = null;
             "./img/spot5.png",
             "./img/spot6.png",
             "./img/spot7.png",
+            "./img/spot8.png",
             "./img/bus-stop0.png",
         ],
         FILE_PATH: "./csv/takaoka_spot_utf-8.csv"
