@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -9,8 +9,6 @@
     <meta name="author" content="">
 
     <title>シン・タカオカ・ランド - 楽しめる新高岡・高岡エリア</title>
-    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&key=AIzaSyBSMXIHZDkgif3AV35qm38k2e7ZZNraS4o" async defer></script>
-    <script src="./js/base.js" type="application/ecmascript"></script>
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
 
@@ -74,7 +72,9 @@
             <div id="map-main"></div>
             <div id="foot-sub-item"> 
                 <a href="TwitterMain.html" target="_top" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-share"></span>Twitter</a><br/>
-                <a href="#" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-taxi"></span>タクシーを呼ぶ</a>
+                <button onclick="$('#routeDetail').dialog('close'); $('#recommendCoure').dialog('close'); $('#callTaxi').dialog('open'); getAddress();" class="btn btn-sm btn-success">
+                    <span class="glyphicon glyphicon-taxi"></span>タクシーを呼ぶ
+                </button>
                 <div><input id="searchKeyword" type="text"/><button onClick="landMap.addressMatching($('#searchKeyword').val(),function(){});">検索</button></div>
                 <button onClick="$('#routeDetail').dialog('close');$('#recommendCoure').dialog('open');">おすすめコース</button>
             </div>
@@ -100,9 +100,17 @@
                 <button onclick='$("#recommendCoure").dialog("close");landMap.searchRoute();'>検索</button>
         </div>               
         <div id="routeDetail" title="コース詳細"></div>
-            
-        
-        
+
+        <div id="callTaxi" title="タクシーを呼ぶ">
+            <div id="nowAddress">現在地：</div>
+            <hr>
+            <ul>
+                <li> 高岡交通株式会社  -  TEL：0766231212 </li>
+                <li> 昭和交通株式会社  -  TEL：0120189252 </li>
+                <li> 株式会社新和タクシー  -  TEL：0766270500 </li>
+            </ul>
+        </div>
+
         <!--<textarea id="myconsole"></textarea><a onclick='$("#myconsole").html("");'>クリア</a>-->
         <hr class="featurette-divider">
 
@@ -159,10 +167,15 @@
     <script src="js/jquery.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&amp;key=AIzaSyBSMXIHZDkgif3AV35qm38k2e7ZZNraS4o" async defer></script>
+    <script src="./js/base.js" type="application/ecmascript"></script>
     <script src="./js/map.js" type="text/javascript"></script>
+    <script src="./js/gpsMain.js" type="text/javascript"></script>
     <script type="text/javascript">
-    	window.onload = function() { 
-        	landMap = new LandMap();
+        shinTakaoka.started
+        .then(function(){
+            var map = shinTakaoka.map;
+            landMap = new LandMap();
         	landMap.Init(map);
 
             $("#recommendCoure").dialog({
@@ -182,10 +195,16 @@
                     my: 'right top'
                 }
             });
-            
 
-            
-    	}
+            $("#callTaxi").dialog({
+                autoOpen: false,
+                position: {
+                    of: '#map-main',
+                    at: 'right top',
+                    my: 'right top'
+                }
+            });
+        });
     </script>
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
