@@ -143,8 +143,12 @@
                     icon: settings.SPOT.ICONS[zoneId],
                     map: map
                 });
+                var spotimg = "/spot_pictures/"+ row.stop_id + ".jpg"; //スポット写真
                 var info = new google.maps.InfoWindow({
-                    content: "<strong>" + row.stop_name + "</strong><p>" + row.stop_desc + "</p>"
+                //    content: "<strong>" + row.stop_name + "</strong><p>" + row.stop_desc + "</p>"
+                    content: "<strong>" + row.stop_name + "</strong><p>" + row.stop_desc + "</p>" 
+                     +  "<a href='" + row.stop_url  + "' target='_blank'>" + row.stop_url  + "</a><br>"
+                    + "<image src='" + spotimg + "' onerror='this.src=\"/spot_pictures/not.jpg\";' width='200'/>"
                 });
                 google.maps.event.addListener(marker, 'click', function () {
                     info.open(map, marker);
