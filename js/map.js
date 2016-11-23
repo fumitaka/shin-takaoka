@@ -8,6 +8,7 @@ function LandMap()
     this.markerImages = new MakerImages();
     this.geocoder = new Geocoder();
     this.routeRequestList = null;
+    this.presentLocationMarker = null;
 }
 /*-------------------------------------------*/
 /*  LandMap.Init 地図初期化
@@ -21,6 +22,38 @@ LandMap.prototype.Init = function (map) {
     this.fitToMap(border);
     //境界描画
     this.putLine(border, getBorderPen());
+    //現在地
+    watchGPS(function(position){
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        if(landMap.presentLocationMarker == null){
+            landMap.presentLocationMarker = landMap.putMarker(lat, lng);
+            console.log("marker make");
+        }
+        else{
+            console.log("marker update");
+            landMap.presentLocationMarker.setPosition(new google.maps.LatLng( lat , lng ) ) ;
+                
+	    }
+    });
+    /*
+    .then(
+        function(position){
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            if(landMap.presentLocationMarker == null){
+                landMap.presentLocationMarker = landMap.putMarker(lat, lng);
+                console.log("marker make");
+            }
+            else{
+                console.log("marker update");
+                landMap.presentLocationMarker.setPosition(new google.maps.LatLng( lat , lng ) ) ;
+                
+	       }
+          
+        }, 
+        function(e){console.log(e);}
+    );   */ 
     
     //クリックイベントハンドラ
     google.maps.event.addListener(this.map, "click", function (event) {
