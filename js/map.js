@@ -16,6 +16,7 @@ function LandMap()
 LandMap.prototype.Init = function (map) {
     this.map = map;
 
+
     //境界線取得
     var border = this.getLatlngList(borderLatlngList);
     //縮尺調整
@@ -28,6 +29,8 @@ LandMap.prototype.Init = function (map) {
         var lng = position.coords.longitude;
         if(landMap.presentLocationMarker == null){
             landMap.presentLocationMarker = landMap.putMarker(lat, lng);
+            landMap.setImageToMarker(landMap.presentLocationMarker, "./img/presentLoca.png");
+            landMap.openInfoWindowByMarker(landMap.createInfoWindow("現在地"),landMap.presentLocationMarker);
             console.log("marker make");
         }
         else{
@@ -125,7 +128,7 @@ LandMap.prototype.addEventHandlerToMarker = function (marker, id) {
 LandMap.prototype.createMarker = function (lat, lng) {
     var marker = new google.maps.Marker({
         position: new google.maps.LatLng(lat, lng),
-        draggable: true,
+        draggable: false,
         raiseOnDrag: false       
     });
     return marker;
@@ -145,6 +148,13 @@ LandMap.prototype.addInfoWindowToMarker = function (marker, text) {
     google.maps.event.addListener(marker, 'click', function () {
         infoWindow.open(this.map, marker);
     });
+    return infoWindow;
+}
+/*-------------------------------------------*/
+/*  LandMap.createInfoWindow 情報ウィンドウ作成
+/*-------------------------------------------*/
+LandMap.prototype.createInfoWindow = function (text) {
+    var infoWindow = new google.maps.InfoWindow({ content: text, maxWidth:150,disableAutoPan: true });
     return infoWindow;
 }
 /*-------------------------------------------*/
@@ -625,7 +635,7 @@ function getRoutePen(){
     return route;
 }
 var borderLatlngList = [
-    {lat:36.741738529645055,lng:137.0094895362854},
+/*    {lat:36.741738529645055,lng:137.0094895362854},
     {lat:36.74180730918472,lng:137.01326608657837},
     {lat:36.74338922158555,lng:137.01772928237915},
     {lat:36.74101634075728,lng:137.0195746421814},
@@ -638,8 +648,38 @@ var borderLatlngList = [
     {lat:36.72822215415311,lng:137.00845956802368},
     {lat:36.7367346527895,lng:137.00945734977722},
     {lat:36.73876375557534,lng:137.00915694236755},
-    /*{lat:36.74184169893145,lng:137.00937151908875},*/
-    {lat:36.741738529645055,lng:137.0094895362854}
+    {lat:36.741738529645055,lng:137.0094895362854}*/
+    
+    
+{lat:36.743595555581855,lng:137.01772928237915},
+{lat:36.74221998512839,lng:137.01468229293823},
+{lat:36.74170413985212,lng:137.01142072677612},
+{lat:36.74170413985212,lng:137.00940370559692},
+{lat:36.73864338656765,lng:137.00867414474487},
+{lat:36.73338135690311,lng:137.00798749923706},
+{lat:36.730767404168105,lng:137.00760126113892},
+{lat:36.7305610356883,lng:137.00867414474487},
+{lat:36.72794698693587,lng:137.00845956802368},
+{lat:36.72694949750766,lng:137.0091462135315},
+{lat:36.72677751526221,lng:137.014639377594},
+{lat:36.726192772746636,lng:137.01953172683716},
+{lat:36.726192772746636,lng:137.01953172683716},
+/*{lat:36.72736225332531,lng:137.02062606811523},*/
+    
+
+{lat:36.72709998165648,lng:137.01952904462814},
+{lat:36.72670872225618,lng:137.02420949935913},
+{lat:36.73097377209324,lng:137.02163457870483},
+{lat:36.732211967996214,lng:137.02189207077026},
+{lat:36.7334501439312,lng:137.0215916633606},
+{lat:36.73609839764989,lng:137.02369451522827},
+{lat:36.73867777773197,lng:137.02378034591675},
+{lat:36.73864338656765,lng:137.02223539352417},
+{lat:36.740397316302115,lng:137.02118396759033},
+{lat:36.74091317036145,lng:137.01953172683716},
+{lat:36.74356116662098,lng:137.01764345169067}
+    
+    
     ];
 var sampleCourse = [
     {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0},

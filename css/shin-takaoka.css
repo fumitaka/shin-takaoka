@@ -27,14 +27,14 @@ body {
     font-size: 1.5em;
     /*background: #fff;
     background: rgba(255,255,255,0.9);*/
-    margin:0;
+    margin:0;padding:0;
 }
 .headline h1 img {
-    /*width:100%;*/
-    height:auto;
+    width:80%;
+    /*height:auto;
     position: relative;
     top:-45px;
-    z-index: 2000;
+    z-index: 2000;*/
 }
 
 .headline h2 {
@@ -88,9 +88,9 @@ footer {
 }
 
 @media(max-width:1200px) {
-    body {
+    /*body {
 	margin-top:0;
-    }
+    }*/
     .headline h1 {
         font-size: 1.2em;
     }
@@ -181,9 +181,9 @@ footer {
 }
 
 @media(max-width:640px) {
-    .headline {
+    /*.headline {
         padding: 75px 0 25px 0;
-    }
+    }*/
 
     .headline h1 {
         font-size: 1.2em;
