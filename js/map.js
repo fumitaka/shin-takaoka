@@ -9,14 +9,14 @@ function LandMap()
     this.geocoder = new Geocoder();
     this.routeRequestList = null;
     this.presentLocationMarker = null;
+    this.timer = false;
 }
 /*-------------------------------------------*/
 /*  LandMap.Init 地図初期化
 /*-------------------------------------------*/
 LandMap.prototype.Init = function (map) {
     this.map = map;
-
-
+    this.fitMapToWindow();
     //境界線取得
     var border = this.getLatlngList(borderLatlngList);
     //縮尺調整
@@ -31,7 +31,6 @@ LandMap.prototype.Init = function (map) {
             landMap.presentLocationMarker = landMap.putMarker(lat, lng);
             landMap.setImageToMarker(landMap.presentLocationMarker, "./img/presentLoca.png");
             landMap.openInfoWindowByMarker(landMap.createInfoWindow("現在地"),landMap.presentLocationMarker);
-            console.log("marker make");
         }
         else{
             console.log("marker update");
@@ -57,14 +56,46 @@ LandMap.prototype.Init = function (map) {
         }, 
         function(e){console.log(e);}
     );   */ 
-    
-    //クリックイベントハンドラ
+    //おすすめルートの出発時刻を現在時刻に
+    var Nowymdhms　=　new Date();
+    var NowHour = ("0" + Nowymdhms.getHours()).slice(-2);
+    var NowMin = ("0" + Nowymdhms.getMinutes()).slice(-2);
+    $("#startTime").val(NowHour + ":" + NowMin)
+    //地図クリックイベントハンドラ
     google.maps.event.addListener(this.map, "click", function (event) {
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
         var html = $('#myconsole').html() + "\n{lat:" + lat + ",lng:" + lng + "},";
         $('#myconsole').html(html)
     });
+    //地図リサイズイベントハンドラ
+    google.maps.event.addDomListener(window, "resize", function() {
+	   var center = map.getCenter();
+	   google.maps.event.trigger(map, "resize");
+	   map.setCenter(center);
+    });
+    //ウインドウリサイズイベントハンドラ   
+    $(window).resize(function() {
+        if (landMap.timer !== false) {
+            clearTimeout(landMap.timer);
+        }
+        landMap.timer = setTimeout(function() {
+            landMap.fitMapToWindow();
+        }, 200);
+    });
+}
+/*-------------------------------------------*/
+/*  LandMap.jumpToPresenLocation 現在地を地図の中心に
+/*-------------------------------------------*/
+LandMap.prototype.jumpToPresenLocation = function () {    
+    this.setCenter(this.presentLocationMarker.getPosition());
+}
+/*-------------------------------------------*/
+/*  LandMap.fitMapToWindow 地図を画面ピッタリに
+/*-------------------------------------------*/
+LandMap.prototype.fitMapToWindow = function () {    
+    var height = $(window).height();
+    $("#map-main").height(height - $("#map-main").offset().top);
 }
 /*-------------------------------------------*/
 /*  LandMap.setCenter
@@ -220,13 +251,50 @@ LandMap.prototype.getLatlngList = function (array) {
 /*  LandMap.searchRouteRoute
 /*-------------------------------------------*/
 LandMap.prototype.searchRoute = function(){
-    this.drawRoute(sampleCourse);
+    this.showMap();
+    var startTime = $("#startTime").val().split(":");
+    var startTime_sec = parseInt(startTime[0]) * 3600 + parseInt(startTime[1]) * 60;
+    var searchParam = {
+        freeTime:$("#freeTime").val(),
+        startTime:startTime_sec,
+        startSta:$("#startSta").val(),
+        returnSta:$("#returnSta").val(),
+        transportation:$("#transportation").val(),
+        useBus:$("#useBus:checked").val(),
+        footLength:$("#footLength").val(),
+    }
+    var course = this.getCourse(searchParam);
+    this.drawRoute(course, searchParam);
+}
+
+LandMap.prototype.getCourse = function(searchParam){
+    var sampleCourse = [
+    {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0},
+    {name:"瑞龍寺",lat: "36.735797",lng:"137.010485", stayTime:1800},
+    {name:"新高岡駅",lat: "36.726908",lng: "137.011975", stayTime:0}
+    ];
+    return sampleCourse;
+}
+/*-------------------------------------------*/
+/*  LandMap.showMap 地図が見えてなかったら見えるようにスクロール調整
+/*-------------------------------------------*/
+LandMap.prototype.showMap = function(){    
+        if ($(window).scrollTop() > this.getMapTop()) {
+           var marginTop = 50;
+            $(window).scrollTop(this.getMapTop() - marginTop);
+        }
+}
+/*-------------------------------------------*/
+/*  LandMap.getMapTop 地図が見えてなかったら見えるようにスクロール調整
+/*-------------------------------------------*/
+LandMap.prototype.getMapTop = function(){
+    return $("#map-main").offset().top;
 }
 /*-------------------------------------------*/
 /*  LandMap.drawRoute 経路を検索してルート表示
 /*-------------------------------------------*/
 var routeRequestList = null;
-LandMap.prototype.drawRoute = function (list) {
+LandMap.prototype.drawRoute = function (list, searchParam) {
     var latLngList = this.getLatlngList(list)
     if (latLngList.length < 2) {
         return;
@@ -333,7 +401,7 @@ LandMap.prototype.drawRoute = function (list) {
                     
                     var totalDistance = 0;
                     var totalTimeSpan = 0;
-                    var arrivalTime = 10 * 3600;
+                    var arrivalTime = searchParam.startTime;//10 * 3600;
                     var html = "";
                     for (var i = 0; i < routeRequestList.length; i++) {
                         var routeRequest = routeRequestList[i];
@@ -383,7 +451,7 @@ LandMap.prototype.drawRoute = function (list) {
                             
                     }
                     $('#routeDetail').html(html);
-                    $('#routeDetail').dialog('open');
+                    //$('#routeDetail').dialog('open');
                 }
             });
         }
