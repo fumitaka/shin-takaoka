@@ -7,7 +7,7 @@ function LandMap()
     this.map = null;
     this.markerImages = new MakerImages();
     this.geocoder = new Geocoder();
-    this.routeRequestList = null;
+    this.searchRouteRequestList = null;
     this.presentLocationMarker = null;
     this.timer = false;
 }
@@ -81,6 +81,7 @@ LandMap.prototype.Init = function (map) {
         }
         landMap.timer = setTimeout(function() {
             landMap.fitMapToWindow();
+            landMap.createCourseDetailDialog();
         }, 200);
     });
 }
@@ -96,6 +97,13 @@ LandMap.prototype.jumpToPresenLocation = function () {
 LandMap.prototype.fitMapToWindow = function () {    
     var height = $(window).height();
     $("#map-main").height(height - $("#map-main").offset().top);
+}
+/*-------------------------------------------*/
+/*  LandMap.fitMapToWindow 地図を画面ピッタリに
+/*-------------------------------------------*/
+LandMap.prototype.getMapHeight = function () {    
+    
+    return $("#map-main").height();
 }
 /*-------------------------------------------*/
 /*  LandMap.setCenter
@@ -248,10 +256,28 @@ LandMap.prototype.getLatlngList = function (array) {
 }
 
 /*-------------------------------------------*/
-/*  LandMap.searchRouteRoute
+/*  LandMap.searchCourse
 /*-------------------------------------------*/
-LandMap.prototype.searchRoute = function(){
+LandMap.prototype.searchCourse = function(){
     this.showMap();
+    
+    //表示済みのコースを消す。
+    
+    if(this.searchRouteRequestList != null){
+        //地図上ルートを消す
+        for (var i = 0; i < this.searchRouteRequestList.length; i++) {
+            var renderer = this.searchRouteRequestList[i].renderer;
+            if (renderer) {
+                renderer.setMap(null);
+                renderer = null;
+            }
+        }
+        //オブジェクト初期化
+        this.searchRouteRequestList = new Array();
+    }
+    $("#courseDetailButton").hide();
+    $('#courseDetail').html("");
+
     var startTime = $("#startTime").val().split(":");
     var startTime_sec = parseInt(startTime[0]) * 3600 + parseInt(startTime[1]) * 60;
     var searchParam = {
@@ -260,20 +286,59 @@ LandMap.prototype.searchRoute = function(){
         startSta:$("#startSta").val(),
         returnSta:$("#returnSta").val(),
         transportation:$("#transportation").val(),
-        useBus:$("#useBus:checked").val(),
         footLength:$("#footLength").val(),
     }
     var course = this.getCourse(searchParam);
-    this.drawRoute(course, searchParam);
+    //this.drawRoute(course, searchParam);
+    this.searchRoute(course, searchParam);
+    
 }
 
 LandMap.prototype.getCourse = function(searchParam){
-    var sampleCourse = [
-    {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0},
-    {name:"瑞龍寺",lat: "36.735797",lng:"137.010485", stayTime:1800},
-    {name:"新高岡駅",lat: "36.726908",lng: "137.011975", stayTime:0}
-    ];
-    return sampleCourse;
+    var course = null;
+    if(searchParam.startSta == "takaoka"){
+        if(searchParam.returnSta == "shin"){
+            //高岡→新高岡
+            course = [
+            {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0},
+            {name:"八丁道",lat: "36.73605540724756",lng:"137.01533138751984", stayTime:0},
+            {name:"瑞龍寺",lat: "36.735797",lng:"137.010485", stayTime:1500},
+            {name:"新高岡駅",lat: "36.726908",lng: "137.011975", stayTime:0}
+            ];
+        }
+        else{
+            //高岡→高岡
+            course = [
+            {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0},
+            {name:"八丁道",lat: "36.73605540724756",lng:"137.01533138751984", stayTime:0},
+            {name:"瑞龍寺",lat: "36.735797",lng:"137.010485", stayTime:1800},
+            {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0}
+            ];
+        }
+    }
+    else{
+        if(searchParam.returnSta == "shin"){
+            //新高岡→新高岡
+            course = [
+            {name:"新高岡駅",lat: "36.726908",lng: "137.011975", stayTime:0},
+            {name:"八丁道",lat: "36.73605540724756",lng:"137.01533138751984", stayTime:0},
+            {name:"瑞龍寺",lat: "36.735797",lng:"137.010485", stayTime:1500},
+            {name:"新高岡駅",lat: "36.726908",lng: "137.011975", stayTime:0}
+            ];
+        }
+        else{
+            //新高岡→高岡
+            course = [
+            {name:"新高岡駅",lat: "36.726908",lng: "137.011975", stayTime:0},
+            {name:"瑞龍寺",lat: "36.735797",lng:"137.010485", stayTime:1500},
+            {name:"八丁道",lat: "36.73605540724756",lng:"137.01533138751984", stayTime:0},            
+            {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0}
+            ];
+        }
+    }
+    
+    
+    return course;
 }
 /*-------------------------------------------*/
 /*  LandMap.showMap 地図が見えてなかったら見えるようにスクロール調整
@@ -285,13 +350,231 @@ LandMap.prototype.showMap = function(){
         }
 }
 /*-------------------------------------------*/
-/*  LandMap.getMapTop 地図が見えてなかったら見えるようにスクロール調整
+/*  LandMap.getMapTop 地図の位置(Top)取得
 /*-------------------------------------------*/
 LandMap.prototype.getMapTop = function(){
     return $("#map-main").offset().top;
 }
 /*-------------------------------------------*/
-/*  LandMap.drawRoute 経路を検索してルート表示
+/*  LandMap.searchRoute 経路の検索(結果はrouteRequestList)
+/*-------------------------------------------*/
+
+LandMap.prototype.searchRoute = function (list, searchParam) {
+    
+    var latLngList = this.getLatlngList(list)
+    if (latLngList.length < 2) {
+            $('#courseDetail').dialog("close");
+
+        return false;
+    }
+    //複数の点列のルートをまとめてGoogleにリクエストするための準備
+    var routeRequestList = new Array();
+    var maxWayPointCount = 8;
+    var idx = 0;
+    var endIdx = -1;
+    while (idx < latLngList.length - 1) {
+        var startIdx = idx;
+        endIdx = Math.min(idx + maxWayPointCount + 1, latLngList.length - 1);
+        routeRequestList.push({ startIdx: startIdx, endIdx: endIdx, requestEnd: false, requestSuccess: false, renderer: null });
+        idx = endIdx;
+    }
+
+    // レンダリングオプションの設定
+    var pen = getRoutePen();
+    var rendererOptions = {
+        map: this.map,
+        preserveViewport: false,             // ルートを地図の中心にしないかどうか
+        polylineOptions: pen,               // ポリライン表示オプション
+        suppressPolylines: false,           // ポリライン描画抑制
+        suppressMarkers: true,              // マーカ表示抑制
+        suppressInfoWindows: true           // 情報ウィンドウ抑制
+    };
+    var avoidHighWay = true;
+    
+    // ルート出発地点・到着地点・経由地点のセット
+    var getRoute = function () {
+        //まだ終了していないリクエストのidxを検索
+        var idx = -1;
+        for (var i = 0; i < routeRequestList.length; i++) {
+            if (!routeRequestList[i].requestEnd) {
+                idx = i;
+                break;
+            }
+        }
+        if (idx == -1) {
+            return false;
+        }
+        //start、endをセット
+        var startIdx = routeRequestList[idx].startIdx;
+        var endIdx = routeRequestList[idx].endIdx;
+        var startpt = latLngList[startIdx];
+        var endpt = latLngList[endIdx];
+        //中継地点をセット
+        var waypts = new Array();
+        for (var i = startIdx + 1; i < endIdx; i++) {
+            waypts.push({
+                location: latLngList[i]
+            });
+        }
+
+        api_direction_disp = new google.maps.DirectionsRenderer(rendererOptions);
+        api_direction_service = new google.maps.DirectionsService();
+        // ディレクションサービスのオプションを設定
+        var travelMode = google.maps.DirectionsTravelMode.WALKING;
+        if(searchParam.transportation == "bicycle"){
+            travelMode = google.maps.DirectionsTravelMode.BICYCLING;
+        }
+        else if(searchParam.transportation == "transit"){
+            travelMode = google.maps.DirectionsTravelMode.TRANSIT;
+        }
+        var request = {
+            origin: startpt,
+            destination: endpt,
+            waypoints: waypts,
+            optimizeWaypoints: false,    //ルートの最適化を行うか【行わない：固定】
+            avoidHighways: avoidHighWay, //高速道路の除外
+            avoidTolls: avoidHighWay,    //有料道路の除外    
+            travelMode: travelMode,   //交通手段【車：固定】
+            unitSystem: google.maps.DirectionsUnitSystem.METRIC,    //単位【ｋｍ：固定】
+            region: 'ja' //地域コード【固定】
+        };
+        // ルート検索（ディレクションサービス）
+        try {
+            api_direction_service.route(request, 
+            function (response, status) {
+            	//結果取得
+                if (status == google.maps.DirectionsStatus.OK) {
+                    api_direction_disp.setDirections(response);
+                    //api_direction_disp.setPanel(document.getElementById('routeDetail'));
+                    routeRequestList[idx].renderer = api_direction_disp;
+                    routeRequestList[idx].requestSuccess = true;
+                    routeRequestList[idx].requestEnd = true;
+                    //次のリクエスト
+                    setTimeout(function () {
+                        getRoute();
+                    }, 1000);
+                }
+                //エラー
+                else {
+                    routeRequestList[idx].requestSuccess = false;
+                    routeRequestList[idx].requestEnd = true;
+                    alert("ルート検索に失敗しました。");
+                    $('#courseDetail').dialog("close");
+                    return false;
+                }
+
+                //すべてのリクエスト完了チェック
+                var isFinish = true;
+                for (var i = 0; i < routeRequestList.length; i++) {
+                    if (!routeRequestList[i].requestEnd) {
+                        isFinish = false;
+                        this.routeRequestList = routeRequestList;
+                        break;
+                    }
+                }
+                if (isFinish) {
+                    landMap.createSearchRouteResult(list, routeRequestList, searchParam);
+                    landMap.searchRouteRequestList = routeRequestList;
+                    $("#courseDetailButton").show();
+                    return true;                    
+                }
+            });
+        }
+        catch (e) {
+            consolo.log(e);
+            return false;
+        }
+    }
+    getRoute();
+    
+    
+    
+}
+/*-------------------------------------------*/
+/*  LandMap.showCourseDetail コース詳細ダイアログ表示
+/*-------------------------------------------*/
+LandMap.prototype.showCourseDetail = function () {
+    this.createCourseDetailDialog();
+    $('#courseDetail').dialog('open');
+}
+/*-------------------------------------------*/
+/*  LandMap.createCourseDetailDialog コース詳細ダイアログ作成
+/*-------------------------------------------*/
+LandMap.prototype.createCourseDetailDialog = function () {
+$("#courseDetail").dialog({
+                autoOpen: false,maxHeight:this.getMapHeight(),
+                position: {
+                    of: '#map-main',
+                    at: 'right top',
+                    my: 'right top'
+                }
+            });
+}
+/*-------------------------------------------*/
+/*  LandMap.createSearchRouteResult 経路検索結果からコース詳細ダイアログの内容作成
+/*-------------------------------------------*/
+LandMap.prototype.createSearchRouteResult = function (list, routeRequestList, searchParam) {
+
+    var totalDistance = 0;
+                    var totalTimeSpan = 0;
+                    var arrivalTime = searchParam.startTime;//10 * 3600;
+                    var html = "";
+                    for (var i = 0; i < routeRequestList.length; i++) {
+                        var routeRequest = routeRequestList[i];
+                        var startCust = list[routeRequest.startIdx];
+                        var endCust = list[routeRequest.endIdx];
+                        var route = routeRequestList[i].renderer.getDirections().routes[0];
+                        for (var j = 0; j < route.legs.length; j++) {
+                            var cust = list[routeRequest.startIdx + j];
+
+                            var routeDetail = new RouteDetail();
+                            routeDetail.distance = route.legs[j].distance.value; //m
+                            routeDetail.timeSpan = route.legs[j].duration.value; //s
+                            var instructions = "";
+                            for (var n = 0; n < route.legs[j].steps.length; n++) {
+                                var instructions_step = 
+                                    route.legs[j].steps[n].instructions + " " +
+                                    route.legs[j].steps[n].distance.text;
+                                if(n==route.legs[j].steps.length - 1){
+                                    //<div>目的地は●●です</div>を消す
+                                    //instructions = instructions.replace(/<.+?>/g, "")
+                                    instructions_step = instructions_step.replace(/<div.+?>/g, "");
+                                    instructions_step = instructions_step.replace(/<\/div>/g, "");
+                                    instructions_step = instructions_step.replace(/目的地は.+です/, "");
+                                }
+                                console.log();
+                                instructions += "<span onclick='landMap.setCenter(" + route.legs[j].steps[n].start_location.lat() + "," + route.legs[j].steps[n].start_location.lng() + ");'>" + instructions_step + "</span><br>";
+                            }
+                            routeDetail.instructions = instructions;
+                            cust.routeDetailToNextCust = routeDetail;
+
+                            cust.arrivalTime = arrivalTime; //$("#console").append("到着：" + arrivalTime + "<br>");
+                            arrivalTime = arrivalTime + cust.stayTime + parseInt(routeDetail.timeSpan);
+
+                            totalDistance += routeDetail.distance;
+                            totalTimeSpan += parseInt(routeDetail.timeSpan);// + parseInt(cust.stayTime);
+                            html += "<span style='font-size:1.5em;' onclick='landMap.setCenter(" + cust.lat + "," + cust.lng + ");'>" + cust.name + "</span> " + convertTime(cust.arrivalTime, "h:mm");
+                            if(cust.stayTime != 0){
+                                html += " " + convertTime(cust.stayTime, "h時間m分").replace(/^0時間/, "") + "滞在 ";
+                            }
+                            html += "<br /><a onclick='$(this).next().next().toggle();'>次の行き先まで：" + 
+                                (Math.round((routeDetail.distance * 100) / 1000) / 100) + "km " +
+                                convertTime(routeDetail.timeSpan, "h時間m分").replace(/^0時間/, "") + "</a>" +
+                                "<hr style='border-top: 1px solid #8c8b8b;margin:0px 0px 3px 0px;'>";
+                            html += "<div style='margin:0px 0px 10px 0px;display:none;'>" + instructions + "</div>";
+                        }
+                        endCust.arrivalTime = arrivalTime;
+                        html += "<span style='font-size:1.5em;' onclick='landMap.setCenter(" + endCust.lat + "," + endCust.lng + ");'>" + endCust.name + "</span> " + convertTime(endCust.arrivalTime, "h:mm");
+                            
+                    }
+                    $('#courseDetail').html(html);
+                    //$('#routeDetail').dialog('open');
+                    
+    
+}
+
+/*-------------------------------------------*/
+/*  LandMap.drawRoute ルート表示
 /*-------------------------------------------*/
 var routeRequestList = null;
 LandMap.prototype.drawRoute = function (list, searchParam) {
@@ -753,4 +1036,4 @@ var sampleCourse = [
     {name:"高岡駅",lat: "36.741677",lng: "137.014932", stayTime:0},
     {name:"瑞龍寺",lat: "36.735797",lng:"137.010485", stayTime:1800},
     {name:"新高岡駅",lat: "36.726908",lng: "137.011975", stayTime:0}
-]
+];

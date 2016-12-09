@@ -78,7 +78,7 @@
                 <button onclick="landMap.jumpToPresenLocation();" class="btn btn-sm btn-success">
                     現在地
                 </button>
-                <button class="btn btn-sm btn-success" onClick="$('#routeDetail').dialog('open');">コース詳細</button>
+                <button id="courseDetailButton" class="btn btn-sm btn-success" onClick="landMap.showCourseDetail();">コース詳細</button>
             </div>
             <div id="head-sub-item" class="featurette-head-sub-item"> 
                 
@@ -100,7 +100,7 @@
              <div class="panel-heading">おすすめコース</div>
              <div class="panel-body">
         <!--<div id="recommendCoure" title="おすすめコース">-->
-                所要時間
+                <span onclick="$('#myconsoleDiv').dialog('open');">所要時間</span>
                  <select id="freeTime">
                      <option value="1">1時間</option>
                      <!--<option value="2">2時間</option>
@@ -110,15 +110,14 @@
                 出発<select id="startSta"><option value="takaoka" selected>高岡駅</option><option value="shin">新高岡駅</option></select>
                 到着<select id="returnSta"><option value="takaoka">高岡駅</option><option value="shin" selected>新高岡駅</option></select><br />
                 移動手段<select id="transportation" style="margin-right:0px;">
-                 <option value="walk">徒歩</option><option value="bicycle">自転車</option></select>
-                <input id="useBus" type="checkbox" value="1"><label for="useBus" style="font-weight:normal;margin-right:20px;">バスを使う</label>
+                 <option value="walk">徒歩</option><option value="bicycle">自転車</option><option value="transit">公共交通</option></select>
                 足の長さ<select id="footLength">
                  <option value="short">短め</option><option value="normal" selected>普通</option><option value="long">長め</option></select><br />
-                <button onclick='landMap.searchRoute();'>検索</button>
+                <button onclick='landMap.searchCourse();'>検索</button>
             </div>
         </div>
         <!--</div>-->               
-        <div id="routeDetail" title="コース詳細"></div>
+        <div id="courseDetail" title="コース詳細"></div>
 
         <div id="callTaxi" title="タクシーを呼ぶ">
             <div id="nowAddress">現在地：</div>
@@ -130,7 +129,9 @@
             </ul>
         </div>
 
-        <!--<textarea id="myconsole"></textarea><a onclick='$("#myconsole").html("");'>クリア</a>-->
+        <div id="myconsoleDiv" title="コンソール">
+            <textarea id="myconsole" ></textarea><a onclick='$("#myconsole").html("");'>クリア</a>
+        </div>
         <hr class="featurette-divider">
 
         <!-- First Featurette -->
@@ -193,6 +194,7 @@
     <script type="text/javascript">
         shinTakaoka.started
         .then(function(){
+            $("#courseDetailButton").hide();
             var map = shinTakaoka.map;
             landMap = new LandMap();
         	landMap.Init(map);
@@ -205,17 +207,28 @@
                     my: 'right top'
                 }
             });*/
-            //おすすめルート詳細ダイアログ化
-            $("#routeDetail").dialog({
-                autoOpen: false,
+            landMap.createCourseDetailDialog();
+            //おすすめコース詳細ダイアログ化
+            /*
+            $("#courseDetail").dialog({
+                autoOpen: false,maxHeight:landMap.getMapHeight(),
                 position: {
                     of: '#map-main',
                     at: 'right top',
                     my: 'right top'
                 }
-            });
+            });*/
 
             $("#callTaxi").dialog({
+                autoOpen: false,
+                position: {
+                    of: window,
+                    at: 'center',
+                    my: 'center'
+                }
+            });
+            
+            $("#myconsoleDiv").dialog({
                 autoOpen: false,
                 position: {
                     of: window,
