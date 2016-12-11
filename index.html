@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -61,8 +61,8 @@
     <!-- Full Width Image Header -->
     <header class="header-image">
         <div class="headline">
-                <h1 style="height:115px;"><img src="img/title.png" alt="シン・タカオカ・ランドへようこそ" /></h1>
-                <h2></h2>            
+                <h1><img src="img/title.png" alt="シン・タカオカ・ランドへようこそ" /></h1>
+                <!--<h2></h2>-->           
         </div>        
     </header>
     <!-- Page Content -->
@@ -71,35 +71,53 @@
             
             <div id="map-main"></div>
             <div id="foot-sub-item"> 
-                <a href="TwitterMain.html" target="_top" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-share"></span>Twitter</a><br/>
+                <a href="TwitterMain.html" target="_top" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-share"></span>Twitter</a>
                 <button onclick="$('#routeDetail').dialog('close'); $('#recommendCoure').dialog('close'); $('#callTaxi').dialog('open'); getAddress();" class="btn btn-sm btn-success">
                     <span class="glyphicon glyphicon-taxi"></span>タクシーを呼ぶ
                 </button>
-                <div><input id="searchKeyword" type="text"/><button onClick="landMap.addressMatching($('#searchKeyword').val(),function(){});">検索</button></div>
-                <button onClick="$('#routeDetail').dialog('close');$('#recommendCoure').dialog('open');">おすすめコース</button>
+                <button onclick="landMap.jumpToPresenLocation();" class="btn btn-sm btn-success">
+                    現在地
+                </button>
+                <button id="courseDetailButton" class="btn btn-sm btn-success" onClick="landMap.showCourseDetail();">コース詳細</button>
+            </div>
+            <div id="head-sub-item" class="featurette-head-sub-item"> 
+                
+                <div>
+                    <input id="searchKeyword" type="text" style="width:200px;"/>
+                    <button onClick="landMap.addressMatching($('#searchKeyword').val(),function(){});">検索</button>
+                </div>
             </div>
             
-            
         </main>
-	   <div class="panel panel-primary">
+	   <div class="panel panel-primary" style="margin-bottom:0px;">
              <div class="panel-heading">つぎのシャトルバス(新高岡～高岡駅)</div>
              <div class="panel-body">
                <span class="glyphicon glyphicon-ok-sign"></span>新高岡発　→　高岡方面 つぎは 13:43 ⑤番のりば
              </div>
         </div>
         
-        
-        <div id="recommendCoure" title="おすすめコース">
-                所要時間<select id="freeTime"><option value="1">1時間</option><option value="2">2時間</option><option value="3">3時間</option></select>
+        <div class="panel panel-primary">
+             <div class="panel-heading">おすすめコース</div>
+             <div class="panel-body">
+        <!--<div id="recommendCoure" title="おすすめコース">-->
+                <span onclick="$('#myconsoleDiv').dialog('open');">所要時間</span>
+                 <select id="freeTime">
+                     <option value="1">1時間</option>
+                     <!--<option value="2">2時間</option>
+                     <option value="3">3時間</option>-->
+                 </select>
                 出発時刻<input id="startTime" type="text" value="10:00"/><br />
                 出発<select id="startSta"><option value="takaoka" selected>高岡駅</option><option value="shin">新高岡駅</option></select>
                 到着<select id="returnSta"><option value="takaoka">高岡駅</option><option value="shin" selected>新高岡駅</option></select><br />
-                移動手段<select id="transportation"><option value="walk">徒歩</option><option value="bicycle">自転車</option></select>
-                <input id="useBus" type="checkbox">バスを使う<br />
-                足の長さ<select id="footLength"><option value="short">短め</option><option value="normal" selected>普通</option><option value="long">長め</option></select>
-                <button onclick='$("#recommendCoure").dialog("close");landMap.searchRoute();'>検索</button>
-        </div>               
-        <div id="routeDetail" title="コース詳細"></div>
+                移動手段<select id="transportation" style="margin-right:0px;">
+                 <option value="walk">徒歩</option><option value="bicycle">自転車</option><option value="transit">公共交通</option></select>
+                足の長さ<select id="footLength">
+                 <option value="short">短め</option><option value="normal" selected>普通</option><option value="long">長め</option></select><br />
+                <button onclick='landMap.searchCourse();'>検索</button>
+            </div>
+        </div>
+        <!--</div>-->               
+        <div id="courseDetail" title="コース詳細"></div>
 
         <div id="callTaxi" title="タクシーを呼ぶ">
             <div id="nowAddress">現在地：</div>
@@ -111,7 +129,9 @@
             </ul>
         </div>
 
-        <!--<textarea id="myconsole"></textarea><a onclick='$("#myconsole").html("");'>クリア</a>-->
+        <div id="myconsoleDiv" title="コンソール">
+            <textarea id="myconsole" ></textarea><a onclick='$("#myconsole").html("");'>クリア</a>
+        </div>
         <hr class="featurette-divider">
 
         <!-- First Featurette -->
@@ -174,34 +194,46 @@
     <script type="text/javascript">
         shinTakaoka.started
         .then(function(){
+            $("#courseDetailButton").hide();
             var map = shinTakaoka.map;
             landMap = new LandMap();
         	landMap.Init(map);
 
-            $("#recommendCoure").dialog({
+            /*$("#recommendCoure").dialog({
                 autoOpen: false,
                 position: {
                     of: '#map-main',
                     at: 'right top',
                     my: 'right top'
                 }
-            });
-            
-            $("#routeDetail").dialog({
-                autoOpen: false,
+            });*/
+            landMap.createCourseDetailDialog();
+            //おすすめコース詳細ダイアログ化
+            /*
+            $("#courseDetail").dialog({
+                autoOpen: false,maxHeight:landMap.getMapHeight(),
                 position: {
                     of: '#map-main',
                     at: 'right top',
                     my: 'right top'
                 }
-            });
+            });*/
 
             $("#callTaxi").dialog({
                 autoOpen: false,
                 position: {
-                    of: '#map-main',
-                    at: 'right top',
-                    my: 'right top'
+                    of: window,
+                    at: 'center',
+                    my: 'center'
+                }
+            });
+            
+            $("#myconsoleDiv").dialog({
+                autoOpen: false,
+                position: {
+                    of: window,
+                    at: 'center',
+                    my: 'center'
                 }
             });
         });

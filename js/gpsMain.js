@@ -1,4 +1,4 @@
-﻿
+
 var watchId;
 var geocoder;
 var getLat;
@@ -37,7 +37,7 @@ function getGPS(){
 /*-------------------------------------------*/
 /*  位置情報を追跡する watchGPS()
 /*-------------------------------------------*/
-function watchGPS() {
+function watchGPS(callback) {
     // Geolocation APIに対応している
     if (navigator.geolocation) {
         var dfd = $.Deferred();
@@ -49,6 +49,7 @@ function watchGPS() {
         watchId = window.navigator.geolocation.watchPosition(
         // Success
         function (position) {
+            callback(position);
             dfd.resolve(position);
         },
         // Error
