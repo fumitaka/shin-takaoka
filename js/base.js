@@ -2,7 +2,7 @@
     "use strict";
     /** マップオブジェクト */
     var map = null;
-    /** 場所管理用データ */
+   /** 場所管理用データ */
     var spot_data = null;
     /**
      * 読み込み函数
@@ -143,8 +143,17 @@
                     icon: settings.SPOT.ICONS[zoneId],
                     map: map
                 });
+                var spotimg = "/spot_pictures/"+ row.stop_id + ".jpg"; //スポット写真
+                var spotimg_thumb = "/spot_pictures_thumb/"+ row.stop_id + ".jpg"; //スポット写真
+                var img_str = "";
+                if(zoneId != 8){ //バス停以外
+                    img_str = "<a href=\"" + spotimg + "\"><image src='" + spotimg_thumb + "' onerror='this.src=\"/spot_pictures/not.jpg\";'/></a>"
+                }
                 var info = new google.maps.InfoWindow({
-                    content: "<strong>" + row.stop_name + "</strong><p>" + row.stop_desc + "</p>"
+//2016.11.20 changed    content: "<strong>" + row.stop_name + "</strong><p>" + row.stop_desc + "</p>"
+                    content: "<strong>" + row.stop_name + "</strong><p>" + row.stop_desc + "</p>" 
+                     +  "<a href='" + row.stop_url  + "' target='_blank'>" + row.stop_url  + "</a><br>"
+                     + img_str
                 });
                 google.maps.event.addListener(marker, 'click', function () {
                     info.open(map, marker);
