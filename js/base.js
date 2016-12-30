@@ -143,8 +143,8 @@
                     icon: settings.SPOT.ICONS[zoneId],
                     map: map
                 });
-                var spotimg = "/spot_pictures/"+ row.stop_id + ".jpg"; //スポット写真
-                var spotimg_thumb = "/spot_pictures_thumb/"+ row.stop_id + ".jpg"; //スポット写真
+                var spotimg = "spot_pictures/"+ row.stop_id + ".jpg"; //スポット写真
+                var spotimg_thumb = "spot_pictures_thumb/"+ row.stop_id + ".jpg"; //スポット写真
                 var img_str = "";
                 if(zoneId != 8){ //バス停以外
                     img_str = "<a href=\"" + spotimg + "\"><image src='" + spotimg_thumb + "' onerror='this.src=\"/spot_pictures/not.jpg\";'/></a>"
