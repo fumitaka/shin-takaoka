@@ -22,8 +22,8 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <script src="js/jquery.js"></script>
-    <script src="js/businfo.js"></script>
+    <!--script src="js/jquery.js"></script-->
+    <!--script src="js/businfo.js"></script-->
 
 </head>
 
@@ -74,7 +74,7 @@
             
             <div id="map-main"></div>
             <div id="foot-sub-item"> 
-                <a href="TwitterMain.html" target="_top" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-share"></span>Twitter</a>
+                <a href="TwitterMain.html" target="_top" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-share"></span> Twitter</a>
                 <button onclick="$('#routeDetail').dialog('close'); $('#recommendCoure').dialog('close'); $('#callTaxi').dialog('open'); getAddress();" class="btn btn-sm btn-success">
                     <span class="glyphicon glyphicon-taxi"></span>タクシーを呼ぶ
                 </button>
@@ -83,12 +83,18 @@
                 </button>
                 <button id="courseDetailButton" class="btn btn-sm btn-success" onClick="landMap.showCourseDetail();">コース詳細</button>
             </div>
-            <div id="head-sub-item" class="featurette-head-sub-item"> 
-                
+            <div id="head-sub-item" class="featurette-head-sub-item form-group" > 
                 <div>
-                    <input id="searchKeyword" type="text" style="width:200px;"/>
-                    <button onClick="landMap.addressMatching($('#searchKeyword').val(),function(){});">検索</button>
+                    <input id="searchKeyword" type="text" />
+                    <button class="btn btn-sm btn-success" onClick="landMap.addressMatching($('#searchKeyword').val(),function(){});">
+			<span class="glyphicon glyphicon-search"></span> 検索
+		    </button>
                 </div>
+	    </div>
+	    <div id="head-sub-item2" class="turette-head-sub-item">
+		<button  class="btn btn-sm btn-primary pull-right" id="firstView">
+		   <span class="glyphicon glyphicon-adjust"> 全体
+		</button>
             </div>
             
         </main>
@@ -201,6 +207,8 @@
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
+    <script src="js/businfo.js"></script>
+    
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="./js/base.js" type="application/ecmascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -252,6 +260,9 @@
                     my: 'center'
                 }
             });
+	    $("#firstView").on('click', function() {
+		landMap.Init(map);
+	    });
         });
     </script>
     <!-- Bootstrap Core JavaScript -->

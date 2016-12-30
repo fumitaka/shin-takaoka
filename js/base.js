@@ -107,14 +107,16 @@
                 position: {
                     lat: parseFloat(tEki.stop_lat),
                     lng: parseFloat(tEki.stop_lon)
-                }
+                },
+		zIndex:5
             });
             var sInfoWindow = new google.maps.InfoWindow({
                 content: '新高岡駅',
                 position: {
                     lat: parseFloat(sTEki.stop_lat),
                     lng: parseFloat(sTEki.stop_lon)
-                }
+                },
+		zIndex:4
             });
             tInfoWindow.open(map);
             sInfoWindow.open(map);
@@ -147,7 +149,7 @@
                 var spotimg_thumb = "spot_pictures_thumb/"+ row.stop_id + ".jpg"; //スポット写真
                 var img_str = "";
                 if(zoneId != 8){ //バス停以外
-                    img_str = "<a href=\"" + spotimg + "\"><image src='" + spotimg_thumb + "' onerror='this.src=\"/spot_pictures/not.jpg\";'/></a>"
+                    img_str = "<a href=\"" + spotimg + "\"><image src='" + spotimg_thumb + "' onerror='this.src=\"spot_pictures/not.jpg\";'/></a>"
                 }
                 var info = new google.maps.InfoWindow({
 //2016.11.20 changed    content: "<strong>" + row.stop_name + "</strong><p>" + row.stop_desc + "</p>"
