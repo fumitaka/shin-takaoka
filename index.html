@@ -22,6 +22,9 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script src="js/jquery.js"></script>
+    <script src="js/businfo.js"></script>
+
 </head>
 
 <body>
@@ -89,10 +92,23 @@
             </div>
             
         </main>
-	   <div class="panel panel-primary" style="margin-bottom:0px;">
-             <div class="panel-heading">つぎのシャトルバス(新高岡～高岡駅)</div>
+        <div class="panel panel-primary">
+             <div class="panel-heading">シャトル6案内 (新高岡駅～高岡駅南口間バス)</div>
              <div class="panel-body">
-               <span class="glyphicon glyphicon-ok-sign"></span>新高岡発　→　高岡方面 つぎは 13:43 ⑤番のりば
+                 <div class="container-fluid">
+                     <div class="row">
+                         <div class="col-md-6">
+               【高岡駅南口発→新高岡駅経由→各方面行き】<br />
+               先発: <span id="bus-sb-1-stop">高岡駅南口-番のりば</span> <span id="bus-sb-1-time">--:--</span>発 <span id="bus-sb-1-dest">------</span>行き<br />
+               次発: <span id="bus-sb-2-stop">高岡駅南口-番のりば</span> <span id="bus-sb-2-time">--:--</span>発 <span id="bus-sb-2-dest">------</span>行き
+                         </div>
+                         <div class="col-md-6">
+               【新高岡駅発→高岡駅南口経由→各方面行き】<br />
+               先発: <span id="bus-nb-1-stop">新高岡駅-番のりば</span> <span id="bus-nb-1-time">--:--</span>発 <span id="bus-nb-1-dest">------</span>行き<br />
+               次発: <span id="bus-nb-2-stop">新高岡駅-番のりば</span> <span id="bus-nb-2-time">--:--</span>発 <span id="bus-nb-2-dest">------</span>行き
+                        </div>
+                   </div>
+                 </div>
              </div>
         </div>
         
